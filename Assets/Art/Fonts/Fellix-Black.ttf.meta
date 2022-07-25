@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: a542c394119484e40822996ba4456a1b
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Fellix
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: d4f4dd1165523294cb41ae4dfc2a8a00, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
