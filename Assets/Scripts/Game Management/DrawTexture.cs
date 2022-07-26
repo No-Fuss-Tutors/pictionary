@@ -18,8 +18,13 @@ public class DrawTexture : MonoBehaviour
     Vector2 lastMousepos;
     Vector2 lastMappedPos;
 
+    //[HideInInspector]
+    public List<Stroke> history = new List<Stroke>();
+    public static int currentStroke = -1;
+
     void Start()
     {  
+        currentStroke = - 1;
         lastMousepos = Input.mousePosition;
         collider = GetComponent<BoxCollider2D>();
         collider.size = new Vector3(textureDestination.rectTransform.rect.width, textureDestination.rectTransform.rect.height);
@@ -45,6 +50,20 @@ public class DrawTexture : MonoBehaviour
         Vector2 mousePos = Input.mousePosition;
         if(mouseInRange)
         {
+            if(Input.GetMouseButtonDown(0))
+            {
+                if(currentStroke < history.Count - 1)
+                {
+                    int historySize = history.Count; 
+                    while(currentStroke < historySize - 1)
+                    {
+                        history.RemoveAt(historySize - 1);
+                        historySize--;
+                    }
+                }
+                history.Add(new Stroke());
+                currentStroke++;
+            }
             //Calculate Position
             Vector2 anchorPos = vCorners[0];
             Vector2 mappedPos = new Vector2(mousePos.x, mousePos.y) + new Vector2(-anchorPos.x, anchorPos.y);
@@ -56,7 +75,7 @@ public class DrawTexture : MonoBehaviour
             }
             if(Input.GetMouseButton(0))
             {
-                LineTools.DrawLine(texture, mappedPos, lastMappedPos, drawColor, brushSize);
+                LineTools.DrawLine(texture, mappedPos, lastMappedPos, drawColor, brushSize, ref history);
                 texture.Apply(false, false);
             }
             
@@ -82,6 +101,55 @@ public class DrawTexture : MonoBehaviour
     public static void SetColor(Color color)
     {
         drawColor = color;
+    }
+
+    public class Stroke
+    {
+        public List<OverwritePixel> pixels;
+
+        public Stroke()
+        {
+            pixels = new List<OverwritePixel>();
+        }
+
+        public void Undo(Texture2D tex)
+        {
+            pixels.Reverse();
+            for(int pixelIndex = 0; pixelIndex < pixels.Count; pixelIndex++)
+            {
+                OverwritePixel change = pixels[pixelIndex];
+                tex.SetPixel(change.pixelPosition.x, change.pixelPosition.y, change.oldColor);
+            }
+            tex.Apply(false);
+            currentStroke--;
+            pixels.Reverse();
+        }
+
+        public void Redo(Texture2D tex)
+        {
+            Debug.Log("Low Leve; Redo!");
+            for(int pixelIndex = 0; pixelIndex < pixels.Count; pixelIndex++)
+            {
+                OverwritePixel change = pixels[pixelIndex];
+                tex.SetPixel(change.pixelPosition.x, change.pixelPosition.y, change.newColor);
+            }
+            tex.Apply(false);
+            currentStroke++;
+        }
+    }
+
+    public class OverwritePixel
+    {
+        public Vector2Int pixelPosition;
+        public Color newColor;
+        public Color oldColor;
+
+        public OverwritePixel(Vector2 pixelPos, Color newCol, Color oldCol)
+        {
+            pixelPosition = new Vector2Int(Mathf.RoundToInt(pixelPos.x), Mathf.RoundToInt(pixelPos.y));
+            newColor = newCol;
+            oldColor = oldCol;
+        }
     }
 
     

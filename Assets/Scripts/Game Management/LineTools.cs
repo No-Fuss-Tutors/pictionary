@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class LineTools
 {
-    public static void DrawLine(this Texture2D tex, Vector2 p1, Vector2 p2, Color col, int diameter)
+    public static void DrawLine(this Texture2D tex, Vector2 p1, Vector2 p2, Color col, int diameter, ref List<DrawTexture.Stroke> historyList)
     {
         Vector2 t = p1;
         float frac = 1/Mathf.Sqrt (Mathf.Pow (p2.x - p1.x, 2) + Mathf.Pow (p2.y - p1.y, 2));
@@ -18,7 +18,10 @@ public static class LineTools
             {
                 for(int y = -diameter/2; y < diameter/2; y++)
                 {
+                    Color currentColor = tex.GetPixel((int)t.x + x, (int)t.y + y);
+                    historyList[historyList.Count - 1].pixels.Add(new DrawTexture.OverwritePixel(new Vector2((int)t.x + x, (int)t.y + y), col, currentColor));
                     tex.SetPixel((int)t.x + x, (int)t.y + y, col);
+                    
                 }
             }
             
