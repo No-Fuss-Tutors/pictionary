@@ -10,6 +10,10 @@ public class PictManager : MonoBehaviourPun
     public int playerCount = 1;
     public static int currentDrawer = 0;
     public static string currentWord;
+
+    public GameObject[] drawerPanels;
+    public GameObject[] guesserPanels;
+    bool switchPanels = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +32,10 @@ public class PictManager : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        
+        if(playerID == currentDrawer && switchPanels)
+        {
+            //Switch between the guesser panels and drawer panels
+        }
     }
 
     [PunRPC]
