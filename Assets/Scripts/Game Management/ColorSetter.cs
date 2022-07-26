@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ColorSetter : MonoBehaviour
 {
     public Image image;
+    public bool reflectDrawColor;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,7 +16,10 @@ public class ColorSetter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(reflectDrawColor)
+        {
+            image.color = DrawTexture.drawColor;
+        }
     }
 
     public void SetDrawColor()

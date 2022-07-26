@@ -40,6 +40,21 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - StartLoading
+  - WritePixels
+  - WriteLine
+  - ApplyTexture
+  - SetPixel
+  - WriteBulk
+  - ApplyBulk
+  - SetB
+  - SetG
+  - SetR
+  - SetX
+  - SetY
+  - NetworkUndo
+  - AddHistory
+  - CleanHistory
+  - NetworkRedo
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 0
