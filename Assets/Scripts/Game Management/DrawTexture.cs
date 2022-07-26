@@ -66,7 +66,7 @@ public class DrawTexture : MonoBehaviourPun
         {
             drawColor = new Color(drawColor.r, drawColor.g, drawColor.b, 1);
         }
-        if(photonView.IsMine)
+        if(photonView.IsMine && PictManager.currentDrawer == PictManager.playerID)
         {   
             Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
             float xFactor = (float)Screen.currentResolution.width/(float)Screen.width;
