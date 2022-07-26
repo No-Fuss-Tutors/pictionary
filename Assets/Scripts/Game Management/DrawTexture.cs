@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class DrawTexture : MonoBehaviour
 {
     // Start is called before the first frame update
+    public DrawMode drawMode = DrawMode.Pencil;
     public static Color drawColor;
     [HideInInspector]
     public Texture2D texture;
@@ -14,6 +15,7 @@ public class DrawTexture : MonoBehaviour
     BoxCollider2D collider;
     bool resetMappedPosition = false;
     public int brushSize;
+    public int eraserSize;
     public Vector3[] vCorners = new Vector3[4];
     Vector2 lastMousepos;
     Vector2 lastMappedPos;
@@ -50,36 +52,67 @@ public class DrawTexture : MonoBehaviour
         Vector2 mousePos = Input.mousePosition;
         if(mouseInRange)
         {
-            if(Input.GetMouseButtonDown(0))
-            {
-                if(currentStroke < history.Count - 1)
-                {
-                    int historySize = history.Count; 
-                    while(currentStroke < historySize - 1)
-                    {
-                        history.RemoveAt(historySize - 1);
-                        historySize--;
-                    }
-                }
-                history.Add(new Stroke());
-                currentStroke++;
-            }
             //Calculate Position
             Vector2 anchorPos = vCorners[0];
             Vector2 mappedPos = new Vector2(mousePos.x, mousePos.y) + new Vector2(-anchorPos.x, anchorPos.y);
             Vector2 roundedPos = new Vector2(Mathf.RoundToInt(mappedPos.x), Mathf.RoundToInt(mappedPos.y));
-            if(lastMappedPos == null || resetMappedPosition)
+            switch(drawMode)
             {
-                resetMappedPosition = false;
-                lastMappedPos = mappedPos;
-            }
-            if(Input.GetMouseButton(0))
-            {
-                LineTools.DrawLine(texture, mappedPos, lastMappedPos, drawColor, brushSize, ref history);
-                texture.Apply(false, false);
-            }
-            
-            lastMappedPos = mappedPos;
+                case DrawMode.Pencil:
+                    if(Input.GetMouseButtonDown(0))
+                    {
+                        if(currentStroke < history.Count - 1)
+                        {
+                            int historySize = history.Count; 
+                            while(currentStroke < historySize - 1)
+                            {
+                                history.RemoveAt(historySize - 1);
+                                historySize--;
+                            }
+                        }
+                        history.Add(new Stroke());
+                        currentStroke++;
+                    }
+                    if(lastMappedPos == null || resetMappedPosition)
+                    {
+                        resetMappedPosition = false;
+                        lastMappedPos = mappedPos;
+                    }
+                    if(Input.GetMouseButton(0))
+                    {
+                        LineTools.DrawLine(texture, mappedPos, lastMappedPos, drawColor, brushSize, ref history);
+                        texture.Apply(false, false);
+                    }
+                    lastMappedPos = mappedPos;
+                    break;
+                case DrawMode.Eraser:
+                    if(Input.GetMouseButtonDown(0))
+                    {
+                        if(currentStroke < history.Count - 1)
+                        {
+                            int historySize = history.Count; 
+                            while(currentStroke < historySize - 1)
+                            {
+                                history.RemoveAt(historySize - 1);
+                                historySize--;
+                            }
+                        }
+                        history.Add(new Stroke());
+                        currentStroke++;
+                    }
+                    if(lastMappedPos == null || resetMappedPosition)
+                    {
+                        resetMappedPosition = false;
+                        lastMappedPos = mappedPos;
+                    }
+                    if(Input.GetMouseButton(0))
+                    {
+                        LineTools.DrawLine(texture, mappedPos, lastMappedPos, Color.white, eraserSize+6, ref history);
+                        texture.Apply(false, false);
+                    }
+                    lastMappedPos = mappedPos;
+                    break;
+            }       
         }
         else
         {
@@ -150,6 +183,33 @@ public class DrawTexture : MonoBehaviour
             newColor = newCol;
             oldColor = oldCol;
         }
+    }
+
+    public void SetBrushSize(int newSize)
+    {
+        brushSize = newSize;
+    }
+
+    public void SetBrushSize(Slider slider)
+    {
+        brushSize = Mathf.RoundToInt(slider.value);
+    }
+
+    
+    public void SetEraserSize(int newSize)
+    {
+        eraserSize = newSize;
+    }
+
+    public void SetEraserSize(Slider slider)
+    {
+        eraserSize = Mathf.RoundToInt(slider.value);
+    }
+
+    public enum DrawMode
+    {
+        Pencil,
+        Eraser
     }
 
     
