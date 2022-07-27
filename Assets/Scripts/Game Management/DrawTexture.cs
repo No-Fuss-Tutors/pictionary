@@ -59,7 +59,7 @@ public class DrawTexture : MonoBehaviourPun
         {
             drawColor = new Color(drawColor.r, drawColor.g, drawColor.b, 1);
         }
-        if(PictManager.currentDrawer == PictManager.playerID)
+        if(PictManager.currentDrawer == PictManager.playerID && !PictManager.waiting)
         {   
             Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
             float xFactor = (float)Screen.currentResolution.width/(float)Screen.width;
@@ -158,12 +158,7 @@ public class DrawTexture : MonoBehaviourPun
         networkStroke = -1;
 
         //Start
-        currentStroke = - 1;
         lastMousepos = Input.mousePosition;
-        collider = GetComponent<BoxCollider2D>();
-        collider.size = new Vector3(textureDestination.rectTransform.rect.width, textureDestination.rectTransform.rect.height);
-        Debug.Log(new Vector3(textureDestination.rectTransform.rect.width, textureDestination.rectTransform.rect.height));
-        texture = new Texture2D(Mathf.RoundToInt(textureDestination.rectTransform.rect.width), Mathf.RoundToInt(textureDestination.rectTransform.rect.height));
         for(int x = 0; x < texture.width; x++)
         {
             for(int y = 0; y < texture.height; y++)

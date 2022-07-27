@@ -58,6 +58,13 @@ MonoBehaviour:
   - SendID
   - SetID
   - AddTextBox
+  - SyncRound
+  - SyncSettings
+  - SyncTime
+  - NetworkAssignPoints
+  - SetupGame
+  - RewardDrawingPoints
+  - SyncWord
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 0

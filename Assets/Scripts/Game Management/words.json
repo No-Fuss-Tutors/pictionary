@@ -1,0 +1,60 @@
+{
+    "Standard": {
+        "Easy":[
+            "Apple",
+            "Banana",
+            "Orange",
+            "Car",
+            "Robot",
+            "Shirt",
+            "Pants",
+            "Underwear",
+            "Shoes",
+            "Socks",
+            "Spider",
+            "Mountain",
+            "Ice",
+            "Cactus",
+            "Tree",
+            "Bush",
+            "Key",
+            "Kirby",
+            "Book",
+            "Basketball"
+        ],
+        "Medium": [
+            "Computer",
+            "Human",
+            "Xbox",
+            "Playstation",
+            "Rocket",
+            "Lake",
+            "Beach",
+            "Ice cream",
+            "Super Mario",
+            "McDonald's",
+            "Burger King",
+            "Wendy's",
+            "Grass",
+            "Keyboard",
+            "Mouse",
+            "Monitor"
+        ],
+        "Hard": [
+            "Maze",
+            "Code",
+            "Fist",
+            "Password",
+            "Magic",
+            "E-mail",
+            "Pictionary",
+            "Dictionary",
+            "Transformers",
+            "Ronald McDonald",
+            "Voltage",
+            "Current",
+            "Power Line",
+            "Shell"
+        ]
+    }
+}

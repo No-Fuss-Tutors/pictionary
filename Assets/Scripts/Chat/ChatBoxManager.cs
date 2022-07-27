@@ -29,25 +29,59 @@ public class ChatBoxManager : MonoBehaviourPun
         bool playerTurn = PictManager.playerID == PictManager.currentDrawer;
         //inputField.interactable = (!playerTurn);
         placeholderText.text = (playerTurn) ? "Chat" : "Enter Guess";
+
         if(chatboxSelected && Input.GetKeyDown(KeyCode.Return))
         {
-            NetworkAddTextBox();
+            if((PictManager.playerID == PictManager.currentDrawer || PictManager.finshed))
+            {
+
+            }
+            else
+            {
+                SendMessage();
+            }
         }
     }
 
+    public void SendMessage()
+    {
+        NetworkAddTextBox();
+        if(inputField.text.Trim().ToLower() == PictManager.currentWord.ToLower())
+        {
+            Debug.Log("Awarding points");
+            FindObjectOfType<PictManager>().RewardPoints();
+        }
+        inputField.text = "";
+        inputField.Select();
+    }
+
     [PunRPC]
-    public void AddTextBox(string message, string sender)
+    public void AddTextBox(string message, string sender, bool finished, int senderID)
     {
         textBoxCount++;
         ChatMessage newMessage = Instantiate(messagePrefab).GetComponent<ChatMessage>();
-        newMessage.transform.parent = messageContainer.transform;
-        newMessage.background.color = textBoxColors[textBoxCount%2];
-        newMessage.message.text = "<color=grey>"+sender + "</color>: " + message;
+        if(message.ToLower() == PictManager.currentWord.ToLower() && senderID != PictManager.currentDrawer)
+        {
+            newMessage.transform.parent = messageContainer.transform;
+            newMessage.background.color = Color.green;
+            newMessage.message.text = "<color=white>"+sender+" got it</color>";
+        }
+        else
+        {
+            newMessage.transform.parent = messageContainer.transform;
+            newMessage.background.color = textBoxColors[textBoxCount%2];
+            string nameColor = "grey";
+            if(finished || PictManager.currentDrawer == senderID)
+            {
+                nameColor = "#daa520";
+            }
+            newMessage.message.text = "<b><color="+nameColor+">"+sender + "</color></b>: " + message;
+        }
     }
 
     public void NetworkAddTextBox()
     {
-        photonView.RPC("AddTextBox", RpcTarget.AllBufferedViaServer, inputField.text, PhotonNetwork.NickName);
+        photonView.RPC("AddTextBox", RpcTarget.All, inputField.text.Trim(), PhotonNetwork.NickName, PictManager.finshed, PictManager.playerID);
     }
 
     public void ChatBoxSelected(bool value)
