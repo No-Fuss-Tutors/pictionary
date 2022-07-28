@@ -16,6 +16,9 @@ public class ChatBoxManager : MonoBehaviourPun
     Color[] textBoxColors = new Color[] {new Color(0.8584906f, 0.8584906f, 0.8584906f, 1f), new Color(0.95f, 0.95f, 0.95f)};
     public GameObject messagePrefab;
     public GameObject messageContainer;
+    public RectTransform contentTransform;
+    public GridLayoutGroup contentGrid;
+    public 
     bool chatboxSelected = false;
     // Start is called before the first frame update
     void Start()
@@ -34,13 +37,21 @@ public class ChatBoxManager : MonoBehaviourPun
         {
             if((PictManager.playerID == PictManager.currentDrawer || PictManager.finshed))
             {
-
+                SendMessage();
             }
             else
             {
                 SendMessage();
             }
         }
+        float gridHeight = textBoxCount*(contentGrid.cellSize.y + contentGrid.spacing.y) + contentGrid.padding.top;
+        if(gridHeight != contentTransform.rect.height)
+        {
+            Debug.Log("Setting grid height");
+            contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, gridHeight); 
+
+        }
+        
     }
 
     public void SendMessage()

@@ -99,7 +99,7 @@ public class PictManager : MonoBehaviourPun
             StartRound();
         }
         timeDisplay.text = Mathf.CeilToInt(timeLeft).ToString() + " s";
-        if(PhotonNetwork.IsMasterClient && currentDrawer >= 0 && guessedWord == PhotonNetwork.CurrentRoom.PlayerCount - 1 && !waiting)
+        if(PhotonNetwork.IsMasterClient && currentDrawer >= 0 && guessedWord == PhotonNetwork.CurrentRoom.PlayerCount - 1 && !waiting && PhotonNetwork.CurrentRoom.PlayerCount > 1)
         {
             StartRound();
         }
