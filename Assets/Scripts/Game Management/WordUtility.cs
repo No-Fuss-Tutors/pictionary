@@ -42,13 +42,13 @@ public static class WordUtility
         string hiddenString = "";
         for(int letterIndex = 0; letterIndex < word.Length; letterIndex++)
         {
-            if(!displayIndexes.Contains(letterIndex) || !Char.IsLetter(word[letterIndex]))
+            if(displayIndexes.Contains(letterIndex) || !Char.IsLetter(word[letterIndex]))
             {
-                hiddenString += "_";
+                hiddenString += word[letterIndex];
             }
             else
             {
-                hiddenString += word[letterIndex];
+                hiddenString += "_";
             }
         }
         return hiddenString;

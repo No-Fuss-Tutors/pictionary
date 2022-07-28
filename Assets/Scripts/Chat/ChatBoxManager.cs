@@ -17,8 +17,7 @@ public class ChatBoxManager : MonoBehaviourPun
     public GameObject messagePrefab;
     public GameObject messageContainer;
     public RectTransform contentTransform;
-    public GridLayoutGroup contentGrid;
-    public 
+    public GridLayoutGroup contentGrid; 
     bool chatboxSelected = false;
     // Start is called before the first frame update
     void Start()
