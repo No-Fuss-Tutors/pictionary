@@ -45,7 +45,6 @@ public class PictManager : MonoBehaviourPun
         waiting = false;
         playerID = 0;
         details = new Details[100];
-        LoadingManager.CloseLoadingMenu();
         if(PhotonNetwork.IsMasterClient)
         {
             LoadingManager.instance.photonView.RPC("StartLoading", RpcTarget.Others);
@@ -100,6 +99,10 @@ public class PictManager : MonoBehaviourPun
             StartRound();
         }
         timeDisplay.text = Mathf.CeilToInt(timeLeft).ToString() + " s";
+        if(PhotonNetwork.IsMasterClient && currentDrawer >= 0 && guessedWord == PhotonNetwork.CurrentRoom.PlayerCount - 1 && !waiting)
+        {
+            StartRound();
+        }
         
     }
 
@@ -188,6 +191,7 @@ public class PictManager : MonoBehaviourPun
             newDetails.points = pointValues[idIndex];
             details[pIDs[idIndex]] = newDetails;
         }
+        LoadingManager.CloseLoadingMenu();
         
     }
 
@@ -209,6 +213,7 @@ public class PictManager : MonoBehaviourPun
     {
         Debug.Log("Waiting for choices");
         waiting = true;
+        string lastWord = currentWord;
         Debug.Log("Details: " + playerID.ToString() + ", " + currentDrawer.ToString());
         if(currentDrawer >= PhotonNetwork.CurrentRoom.PlayerCount)
         {
@@ -220,7 +225,7 @@ public class PictManager : MonoBehaviourPun
             Debug.Log("Prompting");
             buttonChoice = StartCoroutine(EnableChoices());
         }
-        while(currentWord == "")
+        while(currentWord == lastWord)
         {
             yield return 0;
         }
@@ -232,7 +237,6 @@ public class PictManager : MonoBehaviourPun
     public void SyncRound(string[] words, int diff)
     {
         wordChoices = words;
-        currentWord = "";
         difficulty = diff;
         currentDrawer++;
         finshed = false;
@@ -248,7 +252,7 @@ public class PictManager : MonoBehaviourPun
 
     public void NewRound()
     {
-        
+        guessedWord = 0;
         DrawTexture.ResetDrawTexture();
     }
 
@@ -257,9 +261,17 @@ public class PictManager : MonoBehaviourPun
         finshed = true;
         int pointsGained = Mathf.CeilToInt(40*difficultyModifier[difficulty] + (timeLeft/(float)GameSettings.seconds)*100);
         points += pointsGained;
+        photonView.RPC("AddGuessed", RpcTarget.All);
         photonView.RPC("NetworkAssignPoints", RpcTarget.All, playerID, points);
         photonView.RPC("RewardDrawingPoints", RpcTarget.All, pointsGained);
     }
+
+    [PunRPC]
+    public void AddGuessed()
+    {
+        guessedWord++;
+    }
+
     [PunRPC]
     public void RewardDrawingPoints(int pointsGained)
     {
@@ -297,7 +309,7 @@ public class PictManager : MonoBehaviourPun
     {
         choiceGroup.blocksRaycasts = false;
         choiceGroup.interactable = false;
-        while(choiceGroup.alpha > 0.01f)
+        while(choiceGroup.alpha > 0.0001f)
         {
             choiceGroup.alpha = Mathf.Lerp(choiceGroup.alpha, 0f, Time.deltaTime*8f);
             yield return 0;

@@ -65,6 +65,7 @@ MonoBehaviour:
   - SetupGame
   - RewardDrawingPoints
   - SyncWord
+  - AddGuessed
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 0
