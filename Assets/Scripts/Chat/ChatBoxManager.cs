@@ -36,7 +36,7 @@ public class ChatBoxManager : MonoBehaviourPun
         {
             if((PictManager.playerID == PictManager.currentDrawer || PictManager.finshed))
             {
-                SendMessage();
+                //Nothing
             }
             else
             {

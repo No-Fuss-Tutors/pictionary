@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using System.Linq;
+using UnityEngine.UI;
 using Photon.Realtime;
 
 public class PictManager : MonoBehaviourPun
@@ -17,10 +18,13 @@ public class PictManager : MonoBehaviourPun
 
     public GameObject[] drawerPanels;
     public GameObject[] guesserPanels;
+    public CanvasGroup resultsPanel;
+    public GameObject resultsContainer;
     public TMPro.TMP_Text roundText;
     public TMPro.TMP_Text wordDisplay;
     public TMPro.TMP_Text timeDisplay;
     public GameObject detailsPrefab;
+    public GameObject resultsPrefab;
     public GameObject detailsContainer;
     public CanvasGroup choiceGroup;
     public Details[] details;
@@ -44,7 +48,7 @@ public class PictManager : MonoBehaviourPun
     {
         waiting = false;
         playerID = 0;
-        details = new Details[100];
+        details = new Details[PhotonNetwork.CurrentRoom.PlayerCount];
         if(PhotonNetwork.IsMasterClient)
         {
             LoadingManager.instance.photonView.RPC("StartLoading", RpcTarget.Others);
@@ -220,17 +224,28 @@ public class PictManager : MonoBehaviourPun
             currentDrawer = 0;
             round++;
         }
-        if(currentDrawer == playerID)
+        if(round > GameSettings.rounds)
         {
-            Debug.Log("Prompting");
-            buttonChoice = StartCoroutine(EnableChoices());
+            round = GameSettings.rounds;
+            if(PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("EndGame", RpcTarget.All);
+            }
         }
-        while(currentWord == lastWord)
-        {
-            yield return 0;
+        else
+        {      
+            if(currentDrawer == playerID)
+            {
+                Debug.Log("Prompting");
+                buttonChoice = StartCoroutine(EnableChoices());
+            }
+            while(currentWord == lastWord)
+            {
+                yield return 0;
+            }
+            waiting = false;
+            NewRound();
         }
-        waiting = false;
-        NewRound();
     }
 
     [PunRPC]
@@ -282,6 +297,13 @@ public class PictManager : MonoBehaviourPun
         }
     }
 
+    [PunRPC]
+    public void EndGame()
+    {
+        StartCoroutine(DisableChoices());
+        StartCoroutine(EndScreen());
+    }
+
     public void ChooseWord(int wordIndex)
     {
         photonView.RPC("SyncWord", RpcTarget.All, wordChoices[wordIndex]);
@@ -315,5 +337,57 @@ public class PictManager : MonoBehaviourPun
             yield return 0;
         }
         choiceGroup.alpha = 0f;
+    }
+
+    IEnumerator EndScreen()
+    {
+        yield return new WaitForSeconds(0.5f);
+        resultsPanel.blocksRaycasts = true;
+        resultsPanel.interactable = true;
+        List<Details> finishingResults = new List<Details>();
+        finishingResults.AddRange(details);
+        List<Details> sortedResults = finishingResults.OrderBy(x=>x.points).ToList();
+        sortedResults.Reverse();
+        Debug.Log("Sorted.");
+        for(int detailIndex = 0; detailIndex < sortedResults.Count; detailIndex++)
+        {
+            Details player = sortedResults[detailIndex];
+            GameObject newResults = Instantiate(resultsPrefab);
+            Details newResultDetails = newResults.GetComponent<Details>();
+            newResults.transform.parent = resultsContainer.transform;
+            newResultDetails.nickName = player.nickName;
+            newResultDetails.points = player.points;
+            if(detailIndex%2 == 1)
+            {
+                Image resultImage = newResults.GetComponent<Image>();
+                resultImage.color = new Color(Color.gray.r, Color.gray.g, Color.gray.b, resultImage.color.a);
+            }
+            if(detailIndex == 0)
+            {
+                //gold
+                newResultDetails.nameText.color = new Color32(255, 215, 0, 255);
+            }
+            if(detailIndex == 1)
+            {
+                //silver
+                newResultDetails.nameText.color = new Color32(192, 192, 192, 255);
+            }
+            if(detailIndex == 2)
+            {
+                //bronze
+                newResultDetails.nameText.color = new Color32(80, 50, 20, 255);
+            }
+        }
+        while(resultsPanel.alpha < 0.99f)
+        {
+            resultsPanel.alpha = Mathf.Lerp(resultsPanel.alpha, 1f, Time.deltaTime*8f);
+            yield return 0;
+        }
+        resultsPanel.alpha = 1f;
+    }
+
+    public void LeaveGame()
+    {
+        PhotonNetwork.LeaveRoom();
     }
 }
