@@ -64,6 +64,12 @@ public class DrawTexture : MonoBehaviourPun
             Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
             float xFactor = (float)Screen.currentResolution.width/(float)Screen.width;
             float yFactor = (float)Screen.currentResolution.height/(float)Screen.height;
+            Debug.Log((float)Screen.width/(float)Screen.height +", " + 2436f/1125f);
+            if(Mathf.Abs((float)Screen.width/(float)Screen.height - 2436f/1125f) < 0.001f)
+            {
+                xFactor *= 0.79f;
+                yFactor *= 0.79f;
+            }
             Debug.Log(xFactor.ToString() + ", " + yFactor.ToString());
             Debug.Log(Screen.width + ", " + Screen.height + " -> " + Screen.currentResolution.width + ", " + Screen.currentResolution.height);
             if(mouseInRange)
