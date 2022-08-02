@@ -15,7 +15,7 @@ public class DrawTexture : MonoBehaviourPun
     public RawImage textureDestination;
     public bool mouseInRange;
     BoxCollider2D collider;
-    bool resetMappedPosition = false;
+    public bool resetMappedPosition = true;
     public int brushSize;
     public int eraserSize;
     public Vector3[] vCorners = new Vector3[4];
@@ -29,6 +29,7 @@ public class DrawTexture : MonoBehaviourPun
     public static int networkStroke = -1;
     void Start()
     {  
+        resetMappedPosition = true;
         currentStroke = - 1;
         lastMousepos = Input.mousePosition;
         collider = GetComponent<BoxCollider2D>();
@@ -54,6 +55,10 @@ public class DrawTexture : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
+        if(!Input.GetMouseButton(0))
+        {
+            resetMappedPosition = true;
+        }
         textureDestination.color = new Color(1, 1, 1, 1);
         if(drawColor.a < 1)
         {
@@ -97,13 +102,14 @@ public class DrawTexture : MonoBehaviourPun
                             photonView.RPC("AddHistory", RpcTarget.Others);
                             currentStroke++;
                         }
-                        if(lastMappedPos == null || resetMappedPosition)
-                        {
-                            resetMappedPosition = false;
-                            lastMappedPos = mappedPos;
-                        }
+
                         if(Input.GetMouseButton(0))
                         {
+                            if(lastMappedPos == null || resetMappedPosition)
+                            {
+                                resetMappedPosition = false;
+                                lastMappedPos = mappedPos;
+                            }
                             WritePackage pencilPackage = LineTools.DrawLine(texture, mappedPos, lastMappedPos, drawColor, brushSize, ref history);
                             texture.Apply(true);
                             //photonView.RPC("WritePixels", RpcTarget.OthersBuffered, pencilPackage.xCoords.ToArray(), pencilPackage.yCoords.ToArray(), pencilPackage.rgb.r, pencilPackage.rgb.g, pencilPackage.rgb.b);
@@ -157,7 +163,7 @@ public class DrawTexture : MonoBehaviourPun
     public void Reset()
     {
         //Global
-        resetMappedPosition = false;
+        resetMappedPosition = true;
         history = new List<Stroke>();
         networkHistory = new List<Stroke>();
         currentStroke = -1;

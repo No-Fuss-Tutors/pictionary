@@ -45,10 +45,15 @@ public static class LineTools
             {
                 for(int y = -diameter/2; y < diameter/2; y++)
                 {
-                    Color currentColor = tex.GetPixel((int)interpolatedPos.x + x, (int)interpolatedPos.y + y);
-                    tex.SetPixel((int)interpolatedPos.x + x, (int)interpolatedPos.y + y, col);
-                    writePackage.xCoords.Add((int)interpolatedPos.x + x);
-                    writePackage.yCoords.Add((int)interpolatedPos.y + y);                  
+                    bool Xrange = (int)interpolatedPos.x + x < tex.height && (int)interpolatedPos.x + x > 0;
+                    bool Yrange = (int)interpolatedPos.y + y < tex.height && (int)interpolatedPos.y + y > 0;
+                    if(Xrange && Yrange)
+                    {
+                        Color currentColor = tex.GetPixel((int)interpolatedPos.x + x, (int)interpolatedPos.y + y);
+                        tex.SetPixel((int)interpolatedPos.x + x, (int)interpolatedPos.y + y, col);
+                        writePackage.xCoords.Add((int)interpolatedPos.x + x);
+                        writePackage.yCoords.Add((int)interpolatedPos.y + y);   
+                    }               
                 }
             }
         }
