@@ -56,20 +56,28 @@ public class LoadingManager : MonoBehaviourPunCallbacks
             StartCoroutine(LeaveRoom());
         }
     }
+
+    public void ForceLeave()
+    {
+        StartCoroutine(LeaveRoom());
+    }
         
 
     IEnumerator LeaveRoom()
     {
-        OpenLoadingMenu();
-        while(!loading)
-        {
-            yield return 0;
+        if(SceneManager.GetActiveScene().buildIndex != 0)
+        {        
+            OpenLoadingMenu();
+            while(!loading)
+            {
+                yield return 0;
+            }
+            AsyncOperation loadingScene = SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
+            while(!loadingScene.isDone)
+            {
+                yield return 0;
+            }
+            CloseLoadingMenu();
         }
-        AsyncOperation loadingScene = SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
-        while(!loadingScene.isDone)
-        {
-            yield return 0;
-        }
-        CloseLoadingMenu();
     }
 }

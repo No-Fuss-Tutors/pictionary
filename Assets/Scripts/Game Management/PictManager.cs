@@ -42,6 +42,7 @@ public class PictManager : MonoBehaviourPun
     public static bool waiting = false;
     public string[] wordChoices;
     Coroutine buttonChoice;
+    bool pressedOnce = false;
 
     // Start is called before the first frame update
     void Start()
@@ -388,6 +389,15 @@ public class PictManager : MonoBehaviourPun
 
     public void LeaveGame()
     {
-        PhotonNetwork.LeaveRoom();
+        if(pressedOnce == false)
+        {
+            pressedOnce = true;
+            PhotonNetwork.LeaveRoom();
+        }
+        else
+        {
+            FindObjectOfType<LoadingManager>().ForceLeave();
+        }
+        
     }
 }

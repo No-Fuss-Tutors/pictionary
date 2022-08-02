@@ -24,8 +24,8 @@ public class NicknameManager : MonoBehaviour
     void Update()
     {
         bool validNickname = (PhotonNetwork.NickName.Length > 0);
-        createButton.interactable = validNickname;
-        joinButton.interactable = validNickname;
+        createButton.interactable = validNickname && PhotonNetwork.IsConnectedAndReady && PhotonNetwork.Server == ServerConnection.MasterServer;
+        joinButton.interactable = validNickname && PhotonNetwork.IsConnectedAndReady && PhotonNetwork.Server == ServerConnection.MasterServer;
     }
 
     public void SetNickname()
